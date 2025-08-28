@@ -13,7 +13,17 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: false, // optional for Google-authenticated users
+    },
+    googleId: {
+        type: String,
+        index: true,
+        sparse: true,
+    },
+    googleTokens: {
+        accessToken: { type: String },
+        refreshToken: { type: String },
+        tokenExpiryDate: { type: Date },
     },
     createdAt: {
         type: Date,

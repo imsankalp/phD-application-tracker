@@ -1,15 +1,23 @@
-exports.isAuthenticated = (req, res, next) => {
-    const token = req.headers['authorization'];
+const jwt = require('jsonwebtoken');
 
-    if (!token) {
+exports.isAuthenticated = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+
+    if (!authHeader) {
         return res.status(401).json({ message: 'No token provided' });
     }
 
-    // Verify token logic here (e.g., using JWT)
-    // If valid, attach user info to request object
-    // req.user = decodedUser;
+    const token = authHeader.startsWith('Bearer ')
+        ? authHeader.substring(7)
+        : authHeader;
 
-    next();
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = { id: decoded.id, email: decoded.email, role: decoded.role || 'user' };
+        next();
+    } catch (err) {
+        return res.status(401).json({ message: 'Invalid or expired token' });
+    }
 };
 
 exports.isAdmin = (req, res, next) => {

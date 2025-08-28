@@ -1,25 +1,30 @@
+const { parseEmailContent } = require('../utils/emailParser');
+
 class ScrapingService {
     constructor(gmailService) {
         this.gmailService = gmailService;
     }
 
-    async scrapeApplicationData(email) {
-        // Logic to scrape relevant data from the email
-        const applicationData = {
-            // Extracted data fields
+    async scrapeApplicationDataFromMessage(message) {
+        const body = this.gmailService.getMessageBody(message);
+        const parsed = parseEmailContent(body || '');
+        return {
+            applicationId: parsed.applicationId,
+            applicationStatus: parsed.status,
+            interviewDate: parsed.interviewDate || null,
+            notes: '',
+            sourceEmailId: message.id,
         };
-        return applicationData;
     }
 
     async processEmails() {
-        const emails = await this.gmailService.fetchEmails();
+        const messages = await this.gmailService.listMessages();
         const applicationDataList = [];
-
-        for (const email of emails) {
-            const applicationData = await this.scrapeApplicationData(email);
-            applicationDataList.push(applicationData);
+        for (const msg of messages) {
+            const full = await this.gmailService.getMessage('me', msg.id);
+            const data = await this.scrapeApplicationDataFromMessage(full);
+            applicationDataList.push(data);
         }
-
         return applicationDataList;
     }
 }

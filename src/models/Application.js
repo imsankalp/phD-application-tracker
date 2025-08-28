@@ -1,18 +1,25 @@
 const mongoose = require('mongoose');
 
 const applicationSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+        index: true,
+    },
     applicantName: {
         type: String,
-        required: true
+        required: false
     },
     university: {
         type: String,
-        required: true
+        required: false
     },
     program: {
         type: String,
-        required: true
+        required: false
     },
+    applicationId: { type: String },
     applicationStatus: {
         type: String,
         enum: ['Submitted', 'Under Review', 'Accepted', 'Rejected'],
@@ -29,7 +36,8 @@ const applicationSchema = new mongoose.Schema({
     notes: {
         type: String,
         default: ''
-    }
+    },
+    sourceEmailId: { type: String, index: true },
 });
 
 module.exports = mongoose.model('Application', applicationSchema);
