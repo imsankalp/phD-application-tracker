@@ -2,6 +2,10 @@
 
 This project is a PhD application tracking application that scrapes data from Gmail, manages PhD application data, and stores it in a MongoDB database.
 
+## API Docs
+
+[Go to API documentation](./docs/API.md)
+
 ## Project Structure
 
 ```
