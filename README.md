@@ -8,7 +8,7 @@ This project is a PhD application tracking application that scrapes data from Gm
 
 ## Application Flow Diagram
 
-[Got to Application Flow] (./docs/FLOW.md)
+[Got to Application Flow](./docs/FLOW.md)
 
 ## Project Structure
 
