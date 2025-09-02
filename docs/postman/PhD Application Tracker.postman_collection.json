@@ -1,0 +1,178 @@
+{
+  "info": {
+    "name": "PhD Application Tracker",
+    "_postman_id": "c2a3d2b2-0000-4000-8000-collection-phd",
+    "description": "Postman collection for the PhD Application Tracker backend API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"john\",\n  \"email\": \"john@example.com\",\n  \"password\": \"StrongP@ssw0rd\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  if (data && data.token) pm.environment.set('jwt', data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"StrongP@ssw0rd\"\n}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const data = pm.response.json();",
+                  "  if (data && data.token) pm.environment.set('jwt', data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        },
+        {
+          "name": "Update Me",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] },
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"johnny\"\n}" }
+          }
+        },
+        {
+          "name": "Google OAuth Initiate",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/auth/google/initiate", "host": ["{{baseUrl}}"], "path": ["auth", "google", "initiate"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Applications",
+      "item": [
+        {
+          "name": "List Applications",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/applications", "host": ["{{baseUrl}}"], "path": ["api", "applications"] }
+          }
+        },
+        {
+          "name": "Create Application",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/applications", "host": ["{{baseUrl}}"], "path": ["api", "applications"] },
+            "body": { "mode": "raw", "raw": "{\n  \"applicantName\": \"John Doe\",\n  \"university\": \"Stanford University\",\n  \"program\": \"PhD in CS\",\n  \"applicationStatus\": \"Under Review\",\n  \"interviewDate\": \"2025-09-15T10:00:00.000Z\",\n  \"submissionDate\": \"2025-08-01T00:00:00.000Z\",\n  \"notes\": \"Submitted via portal\"\n}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  if (data && data._id) pm.environment.set('appId', data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Application By Id",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/applications/{{appId}}", "host": ["{{baseUrl}}"], "path": ["api", "applications", "{{appId}}"] }
+          }
+        },
+        {
+          "name": "Update Application",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/applications/{{appId}}", "host": ["{{baseUrl}}"], "path": ["api", "applications", "{{appId}}"] },
+            "body": { "mode": "raw", "raw": "{\n  \"applicationStatus\": \"Accepted\"\n}" }
+          }
+        },
+        {
+          "name": "Delete Application",
+          "request": {
+            "method": "DELETE",
+            "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/applications/{{appId}}", "host": ["{{baseUrl}}"], "path": ["api", "applications", "{{appId}}"] }
+          }
+        },
+        {
+          "name": "Sync From Gmail",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/applications/sync", "host": ["{{baseUrl}}"], "path": ["api", "applications", "sync"] }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "jwt", "value": "" },
+    { "key": "appId", "value": "" }
+  ]
+}
